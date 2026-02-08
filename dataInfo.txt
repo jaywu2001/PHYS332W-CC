@@ -1,0 +1,4 @@
+Feb 10:
+- SIZE_OF_DATA
+Feb 12:
+- SIZE_OF_DATA
