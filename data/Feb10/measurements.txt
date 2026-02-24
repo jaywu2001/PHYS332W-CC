@@ -1,0 +1,9 @@
+3db point -> 2khz
+testing from point, x,a,b,c(?)
+11.png summing 
+10.png last int
+9.png 2nd last int
+8.png practical integrator
+using another wave gen to make dc offset (setting offset /2 on machine)
+setting dc offset as +0.150V
+going to measure data sets from 50K to 150K in increments of 5K

@@ -1,4 +1,93 @@
-Feb 10:
-- SIZE_OF_DATA
-Feb 12:
-- SIZE_OF_DATA
+February 10, 2026 (Lab Session #3)
+
+Goals
+• test each op amp element and ensure they work as expected
+• observe chaotic behaviour from the circuit
+
+Documentation/ Progress
+• we are testing each op amp element, with a temporary 500 kΩ feedback resistor,
+to make sure they work as expected
+• we are testing the variable resistor op amp; it is not working as expected; we
+are analyzing our subcircuit; it turns out we had our op amp in backwards; it
+is working as expected now; it is a practical integrator
+• we are testing the b/V1 op amp; it works as expected; it is a practical integrator
+• we are testing the a/x op amp; it works as expected; it is a practical integrator
+• we are testing the d/V3 op amp; it works as expected; it is a summing circuit
+• we tested the nonlinear element op amp last lab session, so we are not testing
+it again
+• we are removing the 500 kΩ feedback resistors and are adding the DC voltage
+offset V0 to the circuit (from the DC voltage power supply); we are using a
+voltmeter to measure the voltage from the DC voltage power supply as we
+adjust it to get ≈ 300 mV; we got 303.4 mV; we are instead using another
+function generator (Agilent 33120A) to add the DC voltage offset; we set it to
+150 mV (or 300 mV peak-to-peak) and we are measuring 303 mV; we changed
+it to 160 mV as that is giving a mean of ≈ 300 mV on the oscilloscope
+• we are testing the circuit with the DC voltage offset; nothing is happening on
+the oscilloscope; we realized that one of the wires was in the wrong slot; after
+putting it in the correct slot, it is working as expected (the circuit is exhibiting
+chaotic behaviour); we notice that adjusting the variable resistance changes
+the amplitude (increasing the variable resistance increases the amplitude); we
+also notice that changing the variable resistance also affects the chaos (at a
+certain point, the circuit doesn’t behave chaotically)
+• we are collecting data of measured voltage vs. variable resistance, so that we
+can create the bifurcation diagram at a later point
+• we are changing the voltage offset back to 150 mV, as the oscilloscope is now
+reading the mean voltage as ≈ 300 mV with it
+• we are taking data at different variable resistances; we are doing increments of
+5 kΩ over a range of 50 kΩ to 125 kΩ
+• our data sets are saved in order as: 50.bin; 55.bin; 60.bin; 65.bin; 70.bin; 75.bin;
+80.bin; 85.bin; 90.bin; 95.bin; 100.bin; 105.bin; 110.bin; 115.bin; 120.bin; and
+125.bin
+
+Lab Session #3 Review
+• we tested each op amp element and got them to work as expected
+• we adjusted our variable resistor to cause chaotic behaviour in the circuit
+
+February 12, 2026 (Lab Session #4)
+
+Goals
+• take data
+
+Documentation/ Progress
+• we are collecting data from the nonlinear element, as we now have code that
+can extract and plot the data, without the file being too big; we are collecting
+each Voltage separately; our oscilloscope is recording 28Mpts at a rate of 2
+Gsa/s
+• we are plotting our nonlinear element voltage and nonlinear element voltage-in
+data separately
+• we are collecting more data over smaller increments
+• with everything turned off, the oscilloscope is reading a voltage of 0.68 V
+• we are using the Agilent 33120A function generator to generate a DC offset
+• to turn the Agilent 33120A function generator into DC offset mode, we hold
+the Offset button for two seconds
+• we are setting the voltage offset to 150 mV (or 300 mV peak-to-peak)
+• increasing Rv increases the amplitude; at a certain point, increasing Rv keeps
+it in a single solution (only one wave), but amplitude still increases
+• at Rv ≈ 197kΩ is the minimum Rv for which there is only one solution
+• at Rv ≈ 139kΩ is the minimum Rv for which there are two solutions
+• at Rv ≈ 108kΩ is the minimum Rv for which there are four solutions
+• above 83 kΩ has a pattern and at 83 kΩ it is stable
+• below 83 kΩ is chaotic
+• we found a lower bound for chaotic behaviour at Rv ≈ 73kΩ; we found an
+upper bound for chaotic behaviour at Rv ≈ 83kΩ
+• at 50 kΩ there is a clear singular solution
+• we are grabbing a 1 kΩ resistor to reduce noise; we are measuring 1.02 kΩ
+using the meterman multimeter
+• we are going to collect data from our circuit over a range of 70 kΩ to 90 kΩ in
+increments of 0.1 kΩ
+• we have an offset of 50 mV
+• we saved until 71.4 kΩ in filenames 701 . . . 713, then we saved them using
+their generated filenames SDS0001 . . . SDS0187
+• the oscilloscope had a weird display when the variable resistor was being
+touched
+• we are recollecting data from the nonlinear circuit; the original data we col-
+lected today was too large
+• we are collecting images from the oscilloscope at 3 different values of the vari-
+able resistor (82 kΩ, 83 kΩ, and 90 kΩ) with a 150 mV offset (or 300 mV
+peak-to-peak)
+• we are collecting images from the oscilloscope at different values of the variable
+resistor where period doubling occurs (55.2 kΩ, 190 kΩ, and 83 kΩ)
+
+Lab Session #4 Review
+• we collected data at multiple values of Rv (over which the circuit behaves
+normally and chaotically) for future analysis
