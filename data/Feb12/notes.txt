@@ -1,0 +1,5 @@
+pwoer spectrum demo on canvas
+phase portrait here: https://www.researchgate.net/profile/Njitacke-Zeric/publication/351974109/figure/fig2/AS:1029031856205824@1622351721131/Phase-portraits-showing-period-doubling-bifurcation-route-to-chaos-when-the.png
+reduce noise somehow - use a resistor or RC combo
+offset of 50mv
+71.4kOhm -> sds000001.bin
