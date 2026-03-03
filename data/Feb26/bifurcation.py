@@ -56,6 +56,7 @@ def AMPLITUDES(DATA,INDICES):
 def GETAMPLITUDES(FILEPATH):
     CH1,CH2,T = parse(open(FILEPATH,"rb"))
     CH1*=10.0
+    CH1+=2.0
     FREQS = fft.rfftfreq(CH1.size,T[1])
     temp = np.argwhere(FREQS>0)
     FREQS = np.log10(FREQS[temp]).ravel()
