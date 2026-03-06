@@ -67,6 +67,9 @@ def data(file):
         ch1div *= ch1mag
         file.seek(0x800,0)
         ch1 = np.int8(np.fromfile(file,dtype=np.uint8,count=wavelength,offset=0)-128)*(ch1div/cpdiv)
+        file.seek(0x50,0)
+        ch1off = mag[struct.unpack('<d',file.read(0x8))][0]
+        ch1 += ch1off
     
     if (state2 == 1):
         file.seek(0x20,0)
@@ -79,6 +82,9 @@ def data(file):
         if (state1 == 1):
             file.seek(wavelength,1)
         ch2 = np.int8(np.fromfile(file,dtype=np.uint8,count=wavelength)-128)*(ch2div/cpdiv)
+        file.seek(0x60,0)
+        ch2off = mag[struct.unpack('<d',file.read(0x8))][0]
+        ch2 += ch2off
         
     t = -(tdiv*ngrid/2)+narray*(1/samplerate)
     t = t - np.min(t)
