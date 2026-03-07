@@ -1,5 +1,6 @@
 import numpy as np
 import scipy.fft as fft
+from scipy.signal import find_peaks as fp
 import struct
 
 #---------------------------------------------------------------------#
@@ -76,8 +77,8 @@ def readFile(FILEPATH):
         file.seek(0x800,0)
         ch1 = np.int8(np.fromfile(file,dtype=np.uint8,count=wavelength,offset=0)-128)*(ch1div/cpdiv)
         file.seek(0x50,0)
-        ch1off = struct.unpack('<d',file.read(0x8))[0]
-        ch1 += ch1off
+        # ch1off = struct.unpack('<d',file.read(0x8))[0]
+        # ch1 += ch1off
     
     if (state2 == 1):
         file.seek(0x20,0)
@@ -90,8 +91,8 @@ def readFile(FILEPATH):
             file.seek(wavelength,1)
         ch2 = np.int8(np.fromfile(file,dtype=np.uint8,count=wavelength)-128)*(ch2div/cpdiv)
         file.seek(0x60,0)
-        ch2off = struct.unpack('<d',file.read(0x8))[0]
-        ch2 += ch2off
+        # ch2off = struct.unpack('<d',file.read(0x8))[0]
+        # ch2 += ch2off
         
     t = -(tdiv*ngrid/2)+narray*(1/samplerate)
     t = t - np.min(t)
@@ -105,15 +106,65 @@ def getData(FILEPATH):
     CH2*=10
     return CH1,CH2,T
 
-# Given a filepath string, returns the amplitude data from Channel 1
+def getPeaks(CH1,CH2,T):
+    xdots = np.argwhere(CH2 == 0)
+    return CH1[xdots],CH2[xdots],T[xdots]
+
+# Returns the amplitudes without error correction - both negative and positive amplitude values exist
+def AMPLITUDES(DATA,INDICES):
+    AMPS = np.array([])
+    if (DATA[0] > DATA[1]):
+        DATA = DATA[1:]
+    for i in range(INDICES.size-1):
+        L = DATA[INDICES[i]]
+        R = DATA[INDICES[i+1]]
+        if (L < R):
+            AMPS = np.append(AMPS, R-L)
+    return AMPS
+
+
+# Removes consecutive minimum / maximum points from the conjoined array of maximum and minimum indices
+def FIX(MAXES,MINS):
+    ALL = (np.sort(np.append(MAXES,MINS)))
+    INDICES = np.array([])
+    REMOVE = np.array([],dtype=np.int32)
+    for i in range(len(ALL)):
+        temp = np.argwhere(MAXES == ALL[i])
+        if (temp.size != 0):
+            INDICES = np.append(INDICES,1)
+        temp = np.argwhere(MINS == ALL[i])
+        if (temp.size != 0):
+            INDICES = np.append(INDICES,0)
+    for i in range(len(INDICES)-1):
+        if (INDICES[i] == INDICES[i+1]):
+            REMOVE = np.append(REMOVE, i)
+    ALL = np.delete(ALL, np.flip(REMOVE))
+    return ALL
+
+# With a given FILEPATH string, assuming that the requested data was on CHANNEL 1, returns the BIFURCATION values
+# Rv value is not given / dependent. That is up to the user.
 def getAmplitudes(FILEPATH):
     CH1,CH2,T = readFile(FILEPATH)
-    CH1*=10
-    CH2*=10
-    xdots = np.argwhere(CH2 == 0)
-    peaks = CH1[xdots]
-    AMPLITUDES = peaks[1:]-peaks[:-1]
-    return AMPLITUDES
+    CH1*=10.0
+    CH2*=10.0
+    FREQS = fft.rfftfreq(CH1.size,T[1])
+    temp = np.argwhere(FREQS>0)
+    FREQS = np.log10(FREQS[temp]).ravel()
+    temp=np.argwhere((FREQS<3.9)&(FREQS>2))
+    FREQS = FREQS[temp].ravel()
+    FFT = np.log10(np.abs(fft.rfft(CH1))[temp]).ravel()
+    temp = fp(FFT,prominence=1)[0]
+    FREQS = 10**(FREQS[temp])
+    DATA = np.array([])
+    if (temp.size != 0):
+        WAVGF = np.sum(FREQS*10**FFT[temp])/np.sum(10**FFT[temp])
+        SPACE = len(CH1)/(WAVGF*T[-1])
+        NCH1 = -CH1
+        N = fp(CH1,distance=SPACE/1.35)[0]
+        M = fp(NCH1,distance=SPACE/1.35)[0]
+        INDICES = FIX(N,M)[1:-1]
+        DATA = AMPLITUDES(CH1,INDICES)
+    return DATA
 
 # Given a filepath string, returns the log10(magnitude) vs. frequency data for a power spectrum plot
 def getSpectrum(FILEPATH):
@@ -125,3 +176,24 @@ def getSpectrum(FILEPATH):
     FREQUENCIES = np.log10(FREQUENCIES[temp])
     FFT = np.log10(np.abs(fft.rfft(CH1)))[temp]
     return FREQUENCIES,FFT
+
+# Stores Rv and Amplitude data in the provided FILENAME as binary data
+def pack(FILENAME,RV,DATA):
+    file = open(FILENAME,"wb")
+    SIZE = struct.pack("<i",len(RV))
+    file.write(SIZE)
+    for i in RV:
+        TEMP = struct.pack("<f",i)
+        file.write(TEMP)
+    for i in DATA:
+        TEMP = struct.pack("<f",i)
+        file.write(TEMP)
+        
+# Unpacks binary file to grab Rv and amplitude data from a provided FILENAME string
+def unpack(FILENAME):
+    file = open(FILENAME,"rb")
+    LEN = struct.unpack("<i",file.read(0x4))[0]
+    file.seek(0x4,0)
+    RV = np.float32(np.fromfile(file,dtype=np.float32,count=LEN,offset=0))
+    DATA = np.float32(np.fromfile(file,dtype=np.float32,count=LEN))
+    return RV,DATA
