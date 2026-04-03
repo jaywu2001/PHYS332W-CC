@@ -1,0 +1,13 @@
+----------------FIGURE----------------
+dont need title in figure
+axis scale: use appropriate units on time to reduce leading zeros
+missing subfigure labels like A B C
+for phase portrait, use dx/dt, not in units of V
+missing caption
+overlap the simulated onto the experimental
+(maybe smooth out the function idk)
+----------------SKELETON----------------
+critical role of linearity
+missing intro material
+explain why the 3rd order difeq for chaotic dynamic studies - what is special about it - what are the necessary features for exhibiting chaotic dynamics
+what in general are signatures of transition to chaotic dynamics, which will be considered
