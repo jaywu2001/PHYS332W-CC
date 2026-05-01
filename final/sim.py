@@ -5,7 +5,7 @@ from scipy.signal import find_peaks as fp
 
 Rc = 0.047e6
 R0 = 0.148e6 + 7.43e3
-DxRatio = 120e3/22e3
+DxRatio = 120e3/21.5e3
 V0 = Rc/R0*0.3
 
 def func(t,xt,Rv):
@@ -17,5 +17,5 @@ def func(t,xt,Rv):
 
 
 def simulate(Rv):
-    sol = solve_ivp(func,args=(Rv,),t_span=[-100,500],t_eval=np.linspace(0,312,150000),y0=np.zeros(3))
+    sol = solve_ivp(func,args=(Rv,),t_span=[-100,250],t_eval=np.linspace(0,250,150000),y0=np.zeros(3))
     return sol.t,sol.y[0],sol.y[1]
